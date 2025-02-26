@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LogoutButton from "../components/LogoutButton";
+import { Table, Button, Form } from "react-bootstrap";
 
 const AdminPanel = () => {
   const [leaves, setLeaves] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const leavesPerPage = 5; // Number of leaves per page
 
   useEffect(() => {
     const fetchLeaves = async () => {
@@ -44,48 +49,60 @@ const AdminPanel = () => {
     }
   };
 
+  // **Search & Filter Logic**
+  const filteredLeaves = leaves.filter(
+    (leave) =>
+      leave.user_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (statusFilter === "All" || leave.status === statusFilter.toLowerCase())
+  );
+
+  // **Pagination Logic**
+  const indexOfLastLeave = currentPage * leavesPerPage;
+  const indexOfFirstLeave = indexOfLastLeave - leavesPerPage;
+  const currentLeaves = filteredLeaves.slice(indexOfFirstLeave, indexOfLastLeave);
+
+  const totalPages = Math.ceil(filteredLeaves.length / leavesPerPage);
+
   return (
-    <div
-      className="d-flex flex-column align-items-center vh-100"
-      style={{
-        background: "linear-gradient(to right, #667eea, #764ba2)",
-        padding: "20px",
-      }}
-    >
+    <div className="container mt-5">
       {/* Navbar */}
-      <nav
-        className="navbar navbar-expand-lg navbar-light shadow-sm p-3 mb-4 rounded w-100"
-        style={{
-          background: "rgba(255, 255, 255, 0.2)",
-          backdropFilter: "blur(10px)",
-          borderRadius: "15px",
-          border: "1px solid rgba(255, 255, 255, 0.3)",
-        }}
-      >
-        <h2 className="navbar-brand text-white ms-3">Admin Panel</h2>
-        <div className="ms-auto me-3">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm p-3 mb-4 rounded">
+        <h2 className="navbar-brand">Admin Panel</h2>
+        <div className="ms-auto">
           <LogoutButton />
         </div>
       </nav>
 
+      {/* Search & Filter */}
+      <div className="d-flex justify-content-between mb-3">
+        <Form.Control
+          type="text"
+          placeholder="Search Employee..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ width: "45%" }}
+        />
+
+        <Form.Select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{ width: "45%" }}
+        >
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </Form.Select>
+      </div>
+
       {/* Leave Requests Table */}
-      <div
-        className="card shadow-lg p-4"
-        style={{
-          width: "90%",
-          maxWidth: "900px",
-          background: "rgba(255, 255, 255, 0.2)",
-          backdropFilter: "blur(10px)",
-          borderRadius: "15px",
-          border: "1px solid rgba(255, 255, 255, 0.3)",
-        }}
-      >
-        <h3 className="mb-3 text-white text-center">Leave Requests</h3>
-        {leaves.length > 0 ? (
+      <div className="card shadow-lg p-4">
+        <h3 className="mb-3">Leave Requests</h3>
+        {currentLeaves.length > 0 ? (
           <div className="table-responsive">
-            <table className="table table-hover table-bordered">
-              <thead className="table-light">
-                <tr className="text-center">
+            <Table bordered hover>
+              <thead className="table-dark text-center">
+                <tr>
                   <th>Employee</th>
                   <th>Start Date</th>
                   <th>End Date</th>
@@ -94,13 +111,13 @@ const AdminPanel = () => {
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {leaves.map((leave) => (
-                  <tr key={leave.id} className="text-center">
-                    <td className="fw-bold text-black">{leave.user_name}</td>
-                    <td className="text-back">{leave.start_date}</td>
-                    <td className="text-black">{leave.end_date}</td>
-                    <td className="text-black">{leave.reason}</td>
+              <tbody className="text-center">
+                {currentLeaves.map((leave) => (
+                  <tr key={leave.id}>
+                    <td className="fw-bold">{leave.user_name}</td>
+                    <td>{leave.start_date.split("T")[0]}</td> {/* Truncated Date */}
+                    <td>{leave.end_date.split("T")[0]}</td> {/* Truncated Date */}
+                    <td>{leave.reason}</td>
                     <td>
                       <span
                         className={`badge ${
@@ -117,29 +134,46 @@ const AdminPanel = () => {
                     <td>
                       {leave.status === "pending" && (
                         <>
-                          <button
-                            className="btn btn-outline-success btn-sm me-2"
+                          <Button
+                            variant="success"
+                            size="sm"
+                            className="me-2"
                             onClick={() => updateLeaveStatus(leave.id, "approved")}
                           >
                             ✅ Approve
-                          </button>
-                          <button
-                            className="btn btn-outline-danger btn-sm"
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
                             onClick={() => updateLeaveStatus(leave.id, "rejected")}
                           >
                             ❌ Reject
-                          </button>
+                          </Button>
                         </>
                       )}
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
         ) : (
-          <p className="text-black text-center">No leave requests found.</p>
+          <p className="text-muted text-center">No leave requests found.</p>
         )}
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-center mt-3">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Button
+              key={index}
+              variant={currentPage === index + 1 ? "primary" : "outline-secondary"}
+              className="me-2"
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );
