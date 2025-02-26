@@ -7,4 +7,10 @@ const db = mysql.createPool({
   database: "leavedb", // Your database name
 });
 
+db.getConnection()
+  .then(() => console.log("✅ Connected to MySQL Database"))
+  .catch((err) => {
+    console.error("❌ Database Connection Failed:", err.message);
+    process.exit(1); // Exit if DB connection fails
+  });
 module.exports = db;

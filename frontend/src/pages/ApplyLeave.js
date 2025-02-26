@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 
 const ApplyLeave = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const applyLeave = async (e) => {
@@ -17,11 +19,15 @@ const ApplyLeave = () => {
         { start_date: startDate, end_date: endDate, reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Leave applied successfully");
-      navigate("/dashboard");
+      setShowModal(true);
     } catch (error) {
       alert("Error applying leave");
     }
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    navigate("/dashboard");
   };
 
   return (
@@ -62,6 +68,19 @@ const ApplyLeave = () => {
           <button type="submit" className="btn btn-primary w-100">Apply Leave</button>
         </form>
       </div>
+
+      {/* Success Modal */}
+      <Modal show={showModal} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Leave Applied</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Your leave request has been submitted successfully.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleClose}>
+            Go to Dashboard
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

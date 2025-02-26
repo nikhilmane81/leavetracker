@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -18,7 +21,8 @@ const Login = () => {
       localStorage.setItem("role", res.data.user.role);
       navigate(res.data.user.role === "admin" ? "/admin" : "/dashboard");
     } catch (error) {
-      alert("Invalid credentials");
+      setModalMessage("Invalid credentials. Please try again.");
+      setShowModal(true);
     }
   };
 
@@ -57,6 +61,19 @@ const Login = () => {
           Don't have an account? <Link to="/signup">Sign up here</Link>
         </p>
       </div>
+
+      {/* Error Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Login Failed</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modalMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

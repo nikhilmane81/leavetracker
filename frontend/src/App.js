@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ApplyLeave from "./pages/ApplyLeave";
 import AdminPanel from "./pages/AdminPanel";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Layout from "./components/Layout";
 
 const AdminRoute = ({ element }) => {
   const role = localStorage.getItem("role");
@@ -20,6 +21,7 @@ const PrivateRoute = ({ element }) => {
 function App() {
   return (
     <Router>
+      <Layout>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -27,6 +29,7 @@ function App() {
         <Route path="/apply-leave" element={<PrivateRoute element={<ApplyLeave />} />} />
         <Route path="/admin" element={<AdminRoute element={<AdminPanel />} />} />
       </Routes>
+      </Layout>
     </Router>
   );
 }
