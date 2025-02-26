@@ -27,8 +27,22 @@ const Login = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card p-4 shadow-sm" style={{ width: "350px" }}>
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
+        background: "linear-gradient(to right, #667eea, #764ba2)",
+      }}
+    >
+      <div
+        className="card p-4 shadow-lg text-white"
+        style={{
+          width: "350px",
+          background: "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(10px)",
+          borderRadius: "15px",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
         <h2 className="text-center mb-3">Login</h2>
         <form onSubmit={handleLogin}>
           <div className="mb-3">
@@ -40,6 +54,11 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              style={{
+                background: "rgba(255, 255, 255, 0.2)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                color: "#fff",
+              }}
             />
           </div>
           <div className="mb-3">
@@ -51,14 +70,31 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              style={{
+                background: "rgba(255, 255, 255, 0.2)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                color: "#fff",
+              }}
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
+          <button
+            type="submit"
+            className="btn w-100"
+            style={{
+              background: "rgba(255, 255, 255, 0.3)",
+              color: "#fff",
+              border: "none",
+              fontWeight: "bold",
+            }}
+          >
             Login
           </button>
         </form>
         <p className="mt-3 text-center">
-          Don't have an account? <Link to="/signup">Sign up here</Link>
+          Don't have an account?{" "}
+          <Link to="/signup" style={{ color: "#fff", fontWeight: "bold" }}>
+            Sign up here
+          </Link>
         </p>
       </div>
 

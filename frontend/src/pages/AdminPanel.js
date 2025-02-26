@@ -45,23 +45,47 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div
+      className="d-flex flex-column align-items-center vh-100"
+      style={{
+        background: "linear-gradient(to right, #667eea, #764ba2)",
+        padding: "20px",
+      }}
+    >
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm p-3 mb-4 rounded">
-        <h2 className="navbar-brand">Admin Panel</h2>
-        <div className="ms-auto">
+      <nav
+        className="navbar navbar-expand-lg navbar-light shadow-sm p-3 mb-4 rounded w-100"
+        style={{
+          background: "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(10px)",
+          borderRadius: "15px",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
+        <h2 className="navbar-brand text-white ms-3">Admin Panel</h2>
+        <div className="ms-auto me-3">
           <LogoutButton />
         </div>
       </nav>
 
       {/* Leave Requests Table */}
-      <div className="card shadow-lg p-4">
-        <h3 className="mb-3">Leave Requests</h3>
+      <div
+        className="card shadow-lg p-4"
+        style={{
+          width: "90%",
+          maxWidth: "900px",
+          background: "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(10px)",
+          borderRadius: "15px",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
+        <h3 className="mb-3 text-white text-center">Leave Requests</h3>
         {leaves.length > 0 ? (
           <div className="table-responsive">
-            <table className="table table-striped table-bordered">
-              <thead className="table-dark">
-                <tr>
+            <table className="table table-hover table-bordered">
+              <thead className="table-light">
+                <tr className="text-center">
                   <th>Employee</th>
                   <th>Start Date</th>
                   <th>End Date</th>
@@ -72,11 +96,11 @@ const AdminPanel = () => {
               </thead>
               <tbody>
                 {leaves.map((leave) => (
-                  <tr key={leave.id}>
-                    <td>{leave.user_name}</td>
-                    <td>{leave.start_date}</td>
-                    <td>{leave.end_date}</td>
-                    <td>{leave.reason}</td>
+                  <tr key={leave.id} className="text-center">
+                    <td className="fw-bold text-black">{leave.user_name}</td>
+                    <td className="text-back">{leave.start_date}</td>
+                    <td className="text-black">{leave.end_date}</td>
+                    <td className="text-black">{leave.reason}</td>
                     <td>
                       <span
                         className={`badge ${
@@ -94,16 +118,16 @@ const AdminPanel = () => {
                       {leave.status === "pending" && (
                         <>
                           <button
-                            className="btn btn-success btn-sm me-2"
+                            className="btn btn-outline-success btn-sm me-2"
                             onClick={() => updateLeaveStatus(leave.id, "approved")}
                           >
-                            Approve
+                            ✅ Approve
                           </button>
                           <button
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-outline-danger btn-sm"
                             onClick={() => updateLeaveStatus(leave.id, "rejected")}
                           >
-                            Reject
+                            ❌ Reject
                           </button>
                         </>
                       )}
@@ -114,7 +138,7 @@ const AdminPanel = () => {
             </table>
           </div>
         ) : (
-          <p className="text-muted">No leave requests found.</p>
+          <p className="text-black text-center">No leave requests found.</p>
         )}
       </div>
     </div>
